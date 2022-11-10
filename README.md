@@ -134,6 +134,9 @@ mlagents-learn rollerball_config.yaml -- run-id=RollerBall --force
 ## Задание 2
 ### Подробно опишите каждую строку файла конфигурации нейронной сети. Самостоятельно найдите информацию о компонентах Decision Requester, Behavior Parameters, добавленных на сфере.
 
+Ход работы:
+
+**1)**
 -  Название модели
 ```
   RollerBall:
@@ -240,9 +243,89 @@ mlagents-learn rollerball_config.yaml -- run-id=RollerBall --force
   summary_freq: 10000
 ```
 
+**2)**
+
+**Decision Requester** автоматически запрашивает решения для экземпляра агента через регулярные промежутки времени. Прикрепляется к тому же **GameObject**, что и компонент **Agent**. Компонент DecisionRequester предоставляет удобный и гибкий способ запуска процесса принятия решения агентом. Без DecisionRequester реализация агента должна вручную вызывать функцию RequestDecision()
+
+**Behavior Parameters** Компонент для настройки поведения экземпляра агента и свойств brain. Во время выполнения этот компонент генерирует объекты политики агента в соответствии с настройками, указанными в редакторе
 
 ## Задание 3
-### Какова роль параметра Lr? Ответьте на вопрос, приведите пример выполнения кода, который подтверждает ваш ответ. В качестве эксперимента можете изменить значение параметра.
+### Доработайте сцену и обучите ML-Agent таким образом, чтобы шар перемещался между двумя кубами разного цвета. Кубы должны, как и в первом задании, случайно изменять координаты на плоскости.
 
+Ход работы:
+
+Добавил на сцену новый куб желтого цвета и сделал его целью для **RollerBallAgent**. Добавил в скрипт очередность достижения цели и новый куб.
+
+```cs
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Unity.MLAgents;
+using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Actuators;
+
+public class RollerAgent : Agent
+{
+    private Rigidbody rBody;
+    void Start()
+    {
+        rBody = GetComponent<Rigidbody>();
+        Target = FirstTarget;
+    }
+
+    public Transform FirstTarget;
+    public Transform SecondTarget;
+    private Transform Target;
+
+    public override void OnEpisodeBegin()
+    {
+        if (this.transform.localPosition.y < 0)
+        {
+            this.rBody.angularVelocity = Vector3.zero;
+            this.rBody.velocity = Vector3.zero;
+            this.transform.localPosition = new Vector3(0, 0.5f, 0);
+        }
+
+        if (Target == FirstTarget)
+            Target = SecondTarget;
+        else
+        {
+            Target = FirstTarget;
+            FirstTarget.localPosition = new Vector3(Random.value * 8 - 4, 0.5f, Random.value * 8 - 4);
+            SecondTarget.localPosition = new Vector3(Random.value * 8 - 4, 0.5f, Random.value * 8 - 4);
+        }
+    }
+
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        sensor.AddObservation(Target.localPosition);
+        sensor.AddObservation(this.transform.localPosition);
+        sensor.AddObservation(rBody.velocity.x);
+        sensor.AddObservation(rBody.velocity.z);
+    }
+
+    public float forceMultiplier = 10;
+
+    public override void OnActionReceived(ActionBuffers actionBuffers)
+    {
+        Vector3 controlSignal = Vector3.zero;
+        controlSignal.x = actionBuffers.ContinuousActions[0];
+        controlSignal.z = actionBuffers.ContinuousActions[1];
+        rBody.AddForce(controlSignal * forceMultiplier);
+
+        float distanceToTarget = Vector3.Distance(this.transform.localPosition, Target.localPosition);
+
+        if (distanceToTarget < 1.42f)
+        {
+            SetReward(1.0f);
+            EndEpisode();
+        }
+        else if (this.transform.localPosition.y < 0)
+        {
+            EndEpisode();
+        }
+    }
+}
+```
 
 ## Выводы
