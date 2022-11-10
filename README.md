@@ -31,8 +31,7 @@
 - ✨Magic ✨
 
 ## Цель работы
-Ознакомиться с основными операторами зыка Python на примере реализации линейной регрессии.
-
+познакомиться с программными средствами для создания системы машинного обучения и ее интеграции в Unity. 
 ## Задание 1
 ### Реализовать систему машинного обучения в связке Python - Google-Sheets – Unity
 
@@ -49,7 +48,7 @@ conda activate MLAgent
 pip install mlagents==0.28.0
 pip install torch~=1.7.1 -f https://download.pytorch.org/whl/torch_stable.html
 ```
-
+![Image alt](https://github.com/GreatSherhebe1/UrFU_labaratory_Lab-3/raw/main/скриншоты/laba3_1.png)
 5) Создал на сцене плато(**Floor**), куб(**Target**), сферу (**RollerAgent**);
 6) Добавил в скрипт-файл на RollerAgent;
 
@@ -123,6 +122,9 @@ mlagents-learn rollerball_config.yaml -- run-id=RollerBall --force
 ```
 
 10) Сделал 3, 9, 27 копий модели, пронаблюдал за обучением;
+![Image alt](https://github.com/GreatSherhebe1/UrFU_labaratory_Lab-3/raw/main/скриншоты/laba3_2.png)
+![Image alt](https://github.com/GreatSherhebe1/UrFU_labaratory_Lab-3/raw/main/скриншоты/laba3_3.png)
+![Image alt](https://github.com/GreatSherhebe1/UrFU_labaratory_Lab-3/raw/main/скриншоты/laba3_4.png)
 11) Проверил работу обученной модели
 
 ### Выводы
@@ -327,5 +329,7 @@ public class RollerAgent : Agent
     }
 }
 ```
-
+![Image alt](https://github.com/GreatSherhebe1/UrFU_labaratory_Lab-3/raw/main/скриншоты/laba3_5.png)
 ## Выводы
+В ходе работы научился работать с некоторыми функциями MLAgent, проводить обучение модели с помощью ML Agent.
+Игровой баланс это система весов, которые увеличивают вовлеченность пользователя за счет постоянного изменения состояния экономики в системе, не дающей заскучать или бросить из-за сложности игру. Игровой баланс не идеален, но благодаря инструментам, реализующим ML он становится наиболее реалистичным, подходящим для пользователя по его возможностям.
